@@ -1,89 +1,166 @@
-# Full-Stack React Example
+# Inventory Manager
 
-This repo contains an example of a full-stack application with an express backend and a React frontend.
+Full-stack CRUD app for tracking item inventories. Users create an account,
+log in, and manage their own items (create, view, edit, delete). Anyone,
+logged in or not, can browse every item from every user.
 
-It uses vite as the module bundler and dotenv for configuration. It's organized as a mono-repo using [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces) which allows us to have our client and server in one repo.
+Built with React and React Router (Vite), Express with session auth
+(`express-session`, `bcryptjs`), and PostgreSQL. It is an npm-workspaces
+monorepo (`client` and `server`), so one `npm install` at the root installs
+everything.
 
-> **Note**: When you run `npm install` at the root, it will install all dependencies listed in `package.json`, `server/package.json`, and `client/package.json`.
+## Prerequisites
 
-## Customizing the Template
+Two things need to be installed on your machine before any of the setup
+commands below will work.
 
-1. Create new repo using this one as a template.
-1. Pull that repo down.
+**Node.js** (which includes `npm`). Download it from
+[nodejs.org](https://nodejs.org). `npm` is the tool that reads
+`package.json` and installs the libraries this project depends on, and it
+is also what runs the project's scripts, like `npm run dev`. You can see
+every available script for a project by opening its `package.json` and
+looking at the `scripts` section, or by running `npm run` with nothing
+after it.
 
-## Development Setup
+**Docker**. Download it from
+[docker.com/get-started](https://www.docker.com/get-started/). Docker runs
+Postgres for you in an isolated container instead of you having to install
+Postgres directly on your machine. `docker run`, `docker exec`, and their
+flags come from Docker's own documentation. Running `docker run --help` or
+`docker exec --help` in your terminal prints an explanation of every flag
+used below.
 
-1. Install dependencies: `npm install`
-1. Create your database: `createdb YOUR_DB`
-1. Update `./server/migration.sql` to the schema for your application.
-1. Run your migrations: `psql -f server/migration.sql YOUR_DB`
-1. Create your `.env` file: `cp .env.template .env`
-1. Add your info in `.env`
-1. Run the app: `npm run dev`
+## Setup
+
+Verified on a clean clone. Run these in order.
+
+### 1. Install dependencies
+
+```
+npm install
+```
+
+Run once, from the repo root.
+
+### 2. Start a database
+
+```
+docker run -d --name inventory-db \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=inventory \
+  -p 5432:5432 \
+  postgres:alpine
+```
+
+Starts a disposable Postgres container named `inventory-db`, password
+`postgres`, database `inventory`, reachable at `localhost:5432`.
+
+```
+docker exec inventory-db pg_isready -U postgres
+```
+
+Wait for `accepting connections` before moving on.
+
+### 3. Load the schema
+
+```
+docker exec -i inventory-db psql -U postgres -d inventory < server/migration.sql
+```
+
+Creates the `users` and `items` tables. This runs inside the container, so
+you do not need `psql` installed locally.
+
+### 4. Configure environment variables
+
+```
+cp .env.template .env
+```
+
+Fill in `DATABASE_URL` (from step 2, e.g.
+`postgres://postgres:postgres@localhost:5432/inventory`), `PORT` (e.g.
+`3000`), and `SESSION_SECRET` (any random string).
+
+### 5. Run it
+
+```
+npm run dev
+```
+
+Starts the API server and the Vite dev server together. Open the URL Vite
+prints, not the API server's port.
+
+### Top 5 setup bugs and fixes
+
+1. **`psql: command not found`**. Local `psql` is not installed. Use
+   `docker exec` instead, as in step 3.
+2. **`FATAL: the database system is shutting down`**. Postgres restarts
+   itself once on first boot. Wait for `pg_isready` before connecting.
+3. **`Cannot find module 'express'`**. `npm install` ran inside `client/`
+   or `server/` instead of the root. Delete `node_modules` and reinstall
+   from the root.
+4. **`EADDRINUSE`**. Something else is using port 5432 or 5173. Change the
+   Postgres port in both `docker run` and `.env`, or check the terminal for
+   whichever port Vite picked instead.
+5. **Changed `.env` and nothing happened**. Env vars are only read at
+   startup. Restart `npm run dev`.
+
+## Data Model
+
+Two entities in a one-to-many relationship: a `User` has many `Item`s.
+
+```
+users                      items
+------------------         ------------------------
+id            SERIAL PK    id            SERIAL PK
+first_name    TEXT         user_id       INTEGER FK -> users.id
+last_name     TEXT         item_name     TEXT
+username      TEXT UNIQUE  description   TEXT
+password      TEXT (hash)  quantity      INTEGER
+```
+
+Passwords are hashed with bcrypt, never stored in plaintext. Full schema in
+[`server/migration.sql`](server/migration.sql).
+
+## Features
+
+- Sign up, log in, log out (session cookie, `httpOnly`).
+- Create, edit, and delete items. Edit toggles the page into a form in
+  place, no navigation.
+- View your own inventory, or browse everyone's items. No account needed to
+  browse.
+- Item lists truncate descriptions to 100 characters plus `...`. Single-item
+  view shows the full description.
+- Only an item's owner can edit or delete it, enforced server-side.
+
+## Project Structure
+
+```
+client/               React frontend (Vite)
+  components/          Pages and shared UI
+  api.js                fetch wrapper for the backend
+server/               Express backend
+  routes/auth.js        signup / login / logout / me
+  routes/items.js       item CRUD
+  middleware/requireAuth.js
+  db.js                 Postgres client
+  migration.sql          schema
+```
 
 ## Scripts
 
 **Root**
 
-- `npm run dev` - Runs the API server and hosts your frontend assets.
-- `npm run dev:server` - Runs the API server in watch mode.
-- `npm run dev:client` - Hosts your frontend assets.
+- `npm run dev` runs the API server and hosts the frontend, together.
+- `npm run dev:server` runs just the API server, in watch mode.
+- `npm run dev:client` runs just the frontend dev server.
+- `npm run lint` checks formatting with Prettier.
 
-**/client**
+**`/client`**
 
-- `npm run dev` - Hosts your assets.
-- `npm run build` - Builds your assets (mainly used in CI/CD).
+- `npm run dev` hosts the frontend assets.
+- `npm run build` builds production assets.
 
-**/server**
+**`/server`**
 
-- `npm run dev` - Runs the server in watch mode.
-- `npm run start` - Starts the server (mainly used when deploying).
-
-## Deployment
-
-To deploy this project on Render, you'll need to do the following:
-
-1. Provision a Postgres database instance (you can also create a new database in an existing Postgres instance).
-1. Deploy your backend as a Web Service.
-1. Deploy your frontend assets as a Static Site.
-
-### Provision Postgres Instance
-
-If you have previously provisioned a Postgres instance in Render, you won't be able to create a new one. However, you can create a new database within the existing Postgres instance by following these steps:
-
-1. View your Postgres instance in Render.
-1. Copy the `External Database URL`.
-1. Run `psql <EXTERNAL_DATABASE_URL>`.
-1. Create your database: `CREATE DATABASE my_db`.
-1. Copy the `Internal Database URL` and replace the string after the final slash with the name of the database you created in the previous step. e.g. `postgres://my-user:lkf8ehg@f893hfg/my_postgres_5x9g` becomes `postgres://my-user:lkf8ehg@f893hfg/my_db`.
-1. Save that URL for the next step.
-
-### Create Web Service
-
-To deploy your backend, create a new Web Service in Render with the following options:
-
-![](images/server-settings.png)
-
-> **Note**: The root directory is important since this is where our backend lives in this project structure.
-
-When adding the `DATABASE_URL` environment variable, use the URL you saved from the previous step.
-
-### Create Static Site
-
-To deploy your frontend, create a new Static Site in Render with the following options:
-
-![](images/client-settings.png)
-
-There's one extra step which is to add a Redirect/Rewrite rule.
-
-1. Set the `Source` field to `/api/*`.
-1. For the `Destination` field, go to your Web Service and copy its public URL (e.g. `https://react-mvp-api-fthm.onrender.com`) and append `/api/*` to the end of it (e.g. `https://react-mvp-api-fthm.onrender.com/api/*`)
-1. Set the `Action` to `Rewrite`.
-
-![](images/rewrite-rule.png)
-
-This rule handles proxying API requests to the Static Site over to the Web Service, circumventing any CORS issues.
-
-### Deployment Debugging
-
-To test your deployment, start with testing your backend APIs to ensure you can get data from your database. Once that is established, open up your Static Site and look for any errors in the console.
+- `npm run dev` runs the server in watch mode.
+- `npm run start` starts the server.

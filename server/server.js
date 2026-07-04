@@ -1,26 +1,31 @@
 import express from "express";
-import pg from "pg";
+import session from "express-session";
 import dotenv from "dotenv";
+import authRoutes from "./routes/auth.js";
+import itemRoutes from "./routes/items.js";
 
 dotenv.config({ path: "../.env" });
 
-const { PORT, DATABASE_URL } = process.env;
-
-const client = new pg.Client({
-  connectionString: DATABASE_URL,
-});
-
-await client.connect();
+const { PORT, SESSION_SECRET } = process.env;
 
 const app = express();
 
 app.use(express.json());
+app.use(
+  session({
+    secret: SESSION_SECRET || "dev-secret-change-me",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { httpOnly: true, sameSite: "lax" },
+  })
+);
 
-app.get("/api/tasks", (req, res) => {
-  client.query("SELECT * FROM tasks").then((result) => {
-    res.send(result.rows);
-  });
+app.get("/", (req, res) => {
+  res.send("Backend is running");
 });
+
+app.use("/api/auth", authRoutes);
+app.use("/api/items", itemRoutes);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

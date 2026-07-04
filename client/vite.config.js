@@ -7,7 +7,7 @@ export default {
   plugins: [react()],
   server: {
     proxy: {
-      "/api": `http://localhost:${process.env.PORT}`,
+      "/api/": `http://localhost:${process.env.PORT}`,
     },
   },
   cacheDir: "../node_modules/.vite",

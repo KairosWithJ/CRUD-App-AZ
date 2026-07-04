@@ -1,23 +1,143 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #222;
+  background: #f7f7f8;
 }
 
-.main {
-  padding: 8px;
+a {
+  color: #2a6f97;
+  text-decoration: none;
 }
 
-.task {
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.nav {
   display: flex;
   align-items: center;
-  border: 1px solid black;
-  padding: 2px;
-  max-width: 200px;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: #2a6f97;
+  color: white;
 }
 
-.task + .task {
-  margin-top: 4px;
+.nav-brand {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-.task > * + * {
-  margin-left: 4px;
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-links a,
+.nav-links button {
+  color: white;
+}
+
+.nav-links button {
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.nav-user {
+  opacity: 0.9;
+}
+
+.item-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.item-card {
+  display: block;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  color: #222;
+}
+
+.item-card:hover {
+  border-color: #2a6f97;
+}
+
+.item-card h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.item-meta {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.form-page {
+  max-width: 480px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.form-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-page label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-page input,
+.form-page textarea {
+  font-size: 1rem;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.form-page button,
+.button-row button {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: #2a6f97;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+}
+
+.error {
+  color: #b00020;
+  font-weight: 600;
 }
