@@ -1,4 +1,4 @@
-** working locally/fresh repo test **
+** works on fresh repo test **
 
 # Inventory Manager
 
@@ -56,11 +56,11 @@ docker run -d --name crud-app-az-db \
 
 Starts a disposable Postgres container named `crud-app-az-db`, password
 `postgres`, database `inventory`, reachable at `localhost:5555`. The
-container name is namespaced to this project on purpose — a generic name
+container name is namespaced to this project on purpose, a generic name
 like `inventory-db` is likely to collide with a container from a different
 project already sitting on your machine (see troubleshooting below). Port
 `5555` is used instead of the default `5432` because that port (and `5433`)
-are common collision points with other local Postgres containers — see bug
+are common collision points with other local Postgres containers, see bug
 7 below before assuming `5432` is free.
 
 ```
