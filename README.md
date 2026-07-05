@@ -45,18 +45,21 @@ Run once, from the repo root.
 ### 2. Start a database
 
 ```
-docker run -d --name inventory-db \
+docker run -d --name crud-app-az-db \
   -e POSTGRES_PASSWORD=postgres \
   -e POSTGRES_DB=inventory \
   -p 5432:5432 \
   postgres:alpine
 ```
 
-Starts a disposable Postgres container named `inventory-db`, password
-`postgres`, database `inventory`, reachable at `localhost:5432`.
+Starts a disposable Postgres container named `crud-app-az-db`, password
+`postgres`, database `inventory`, reachable at `localhost:5432`. The
+container name is namespaced to this project on purpose — a generic name
+like `inventory-db` is likely to collide with a container from a different
+project already sitting on your machine (see troubleshooting below).
 
 ```
-docker exec inventory-db pg_isready -U postgres
+docker exec crud-app-az-db pg_isready -U postgres
 ```
 
 Wait for `accepting connections` before moving on.
@@ -64,7 +67,7 @@ Wait for `accepting connections` before moving on.
 ### 3. Load the schema
 
 ```
-docker exec -i inventory-db psql -U postgres -d inventory < server/migration.sql
+docker exec -i crud-app-az-db psql -U postgres -d inventory < server/migration.sql
 ```
 
 Creates the `users` and `items` tables. This runs inside the container, so
@@ -89,7 +92,7 @@ npm run dev
 Starts the API server and the Vite dev server together. Open the URL Vite
 prints, not the API server's port.
 
-### Top 5 setup bugs and fixes
+### Top 6 setup bugs and fixes
 
 1. **`psql: command not found`**. Local `psql` is not installed. Use
    `docker exec` instead, as in step 3.
@@ -103,6 +106,12 @@ prints, not the API server's port.
    whichever port Vite picked instead.
 5. **Changed `.env` and nothing happened**. Env vars are only read at
    startup. Restart `npm run dev`.
+6. **`Conflict. The container name "/crud-app-az-db" is already in use`**.
+   A container with that name already exists on this machine, stopped or
+   running, from a previous run of these steps. Reuse it instead of
+   creating a new one: `docker start crud-app-az-db`. If you want a clean
+   database, remove it first with `docker rm -f crud-app-az-db` and re-run
+   step 2.
 
 ## Data Model
 
