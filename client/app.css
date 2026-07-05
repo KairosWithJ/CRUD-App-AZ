@@ -6,9 +6,13 @@
 /* Page shell */
 .app-body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  color: #222;
-  background: #f7f7f8;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+  color: #e8e6ec;
+  background: #17141d;
 }
 
 .app-root {
@@ -32,7 +36,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
-  background: #2a6f97;
+  background: #3b1f63;
   color: white;
 }
 
@@ -71,13 +75,13 @@
 }
 
 .btn-primary {
-  background: #2a6f97;
+  background: #3b1f63;
   color: white;
 }
 
 .btn-secondary {
-  background: #e2e2e2;
-  color: #222;
+  background: #3a3546;
+  color: #e8e6ec;
 }
 
 .btn-danger {
@@ -104,7 +108,7 @@
 
 .empty-text,
 .loading-text {
-  color: #666;
+  color: #a9a4b5;
 }
 
 .item-list {
@@ -117,16 +121,16 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: white;
-  border: 1px solid #ddd;
+  background: #2a2436;
+  border: 1px solid #423a53;
   border-radius: 8px;
   padding: 16px;
-  color: #222;
+  color: #e8e6ec;
   text-decoration: none;
 }
 
 .item-card:hover {
-  border-color: #2a6f97;
+  border-color: #8f5ce0;
 }
 
 .item-title {
@@ -139,7 +143,7 @@
 }
 
 .item-meta {
-  color: #666;
+  color: #a9a4b5;
   font-size: 0.85rem;
 }
 
@@ -150,10 +154,11 @@
   gap: 16px;
   max-width: 480px;
   margin: 0 auto;
-  background: white;
-  border: 1px solid #ddd;
+  background: #2a2436;
+  border: 1px solid #423a53;
   border-radius: 8px;
   padding: 24px;
+  color: #e8e6ec;
 }
 
 .form {
@@ -174,9 +179,16 @@
 .form-textarea {
   font-size: 1rem;
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #4d4460;
   border-radius: 4px;
   font-family: inherit;
+  background: #1e1a28;
+  color: #e8e6ec;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #8a8496;
 }
 
 .button-row {
@@ -185,6 +197,6 @@
 }
 
 .error {
-  color: #b00020;
+  color: #ff6b81;
   font-weight: 600;
 }
