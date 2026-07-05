@@ -122,7 +122,7 @@ prints, not the API server's port.
    healthy**. Something else is already bound to the port you picked and
    your app is silently talking to that instead of your container. This is
    especially common on WSL2, where a Docker/WSL restart can leave old
-   Postgres containers orphaned — still running, still holding a port, but
+   Postgres containers orphaned, still running, still holding a port, but
    invisible to `docker ps`. Confirm this is the cause by connecting
    straight into your container with `docker exec crud-app-az-db psql -U
    postgres -d inventory -c '\conninfo'` (works) versus connecting from the
