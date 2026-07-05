@@ -50,15 +50,18 @@ Run once, from the repo root.
 docker run -d --name crud-app-az-db \
   -e POSTGRES_PASSWORD=postgres \
   -e POSTGRES_DB=inventory \
-  -p 5432:5432 \
+  -p 5555:5432 \
   postgres:alpine
 ```
 
 Starts a disposable Postgres container named `crud-app-az-db`, password
-`postgres`, database `inventory`, reachable at `localhost:5432`. The
+`postgres`, database `inventory`, reachable at `localhost:5555`. The
 container name is namespaced to this project on purpose — a generic name
 like `inventory-db` is likely to collide with a container from a different
-project already sitting on your machine (see troubleshooting below).
+project already sitting on your machine (see troubleshooting below). Port
+`5555` is used instead of the default `5432` because that port (and `5433`)
+are common collision points with other local Postgres containers — see bug
+7 below before assuming `5432` is free.
 
 ```
 docker exec crud-app-az-db pg_isready -U postgres
@@ -82,7 +85,7 @@ cp .env.template .env
 ```
 
 Fill in `DATABASE_URL` (from step 2, e.g.
-`postgres://postgres:postgres@localhost:5432/inventory`), `PORT` (e.g.
+`postgres://postgres:postgres@localhost:5555/inventory`), `PORT` (e.g.
 `3000`), and `SESSION_SECRET` (any random string).
 
 ### 5. Run it
@@ -94,7 +97,7 @@ npm run dev
 Starts the API server and the Vite dev server together. Open the URL Vite
 prints, not the API server's port.
 
-### Top 6 setup bugs and fixes
+### Top 7 setup bugs and fixes
 
 1. **`psql: command not found`**. Local `psql` is not installed. Use
    `docker exec` instead, as in step 3.
@@ -114,6 +117,20 @@ prints, not the API server's port.
    creating a new one: `docker start crud-app-az-db`. If you want a clean
    database, remove it first with `docker rm -f crud-app-az-db` and re-run
    step 2.
+7. **`password authentication failed for user "postgres"` (or `database
+   "..." does not exist`) even though `pg_isready` says the container is
+   healthy**. Something else is already bound to the port you picked and
+   your app is silently talking to that instead of your container. This is
+   especially common on WSL2, where a Docker/WSL restart can leave old
+   Postgres containers orphaned — still running, still holding a port, but
+   invisible to `docker ps`. Confirm this is the cause by connecting
+   straight into your container with `docker exec crud-app-az-db psql -U
+   postgres -d inventory -c '\conninfo'` (works) versus connecting from the
+   host on the port in `.env` (fails or shows the wrong database). Fix: pick
+   a different, confirmed-free port for `-p` in step 2 (`ss -ltn | grep
+   <port>` should print nothing) and update `DATABASE_URL` to match. To
+   clear the orphans instead of dodging them, restart WSL (`wsl --shutdown`
+   from Windows, then reopen and restart Docker Desktop).
 
 ## Data Model
 
