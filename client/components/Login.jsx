@@ -26,27 +26,31 @@ const Login = () => {
 
   return (
     <div className="form-page">
-      <h1>Log In</h1>
+      <h1 className="page-title">Log In</h1>
       {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className="form" onSubmit={handleSubmit}>
+        <label className="form-label">
           Username
           <input
+            className="form-input"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
           />
         </label>
-        <label>
+        <label className="form-label">
           Password
           <input
+            className="form-input"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </label>
-        <button type="submit">Log In</button>
+        <button className="btn btn-primary" type="submit">
+          Log In
+        </button>
       </form>
     </div>
   );

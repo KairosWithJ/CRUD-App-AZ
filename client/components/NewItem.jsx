@@ -24,35 +24,40 @@ const NewItem = () => {
 
   return (
     <div className="form-page">
-      <h1>Add Item</h1>
+      <h1 className="page-title">Add Item</h1>
       {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className="form" onSubmit={handleSubmit}>
+        <label className="form-label">
           Item Name
           <input
+            className="form-input"
             value={itemName}
             onChange={(e) => setItemName(e.target.value)}
             required
           />
         </label>
-        <label>
+        <label className="form-label">
           Description
           <textarea
+            className="form-textarea"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
           />
         </label>
-        <label>
+        <label className="form-label">
           Quantity
           <input
+            className="form-input"
             type="number"
             min="0"
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
           />
         </label>
-        <button type="submit">Create Item</button>
+        <button className="btn btn-primary" type="submit">
+          Create Item
+        </button>
       </form>
     </div>
   );

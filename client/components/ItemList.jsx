@@ -13,18 +13,18 @@ const ItemList = ({ title, fetchItems }) => {
   }, [fetchItems]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="loading-text">Loading...</p>;
   }
 
   return (
     <div className="item-list-page">
-      <h1>{title}</h1>
-      {items.length === 0 && <p>No items yet.</p>}
+      <h1 className="page-title">{title}</h1>
+      {items.length === 0 && <p className="empty-text">No items yet.</p>}
       <div className="item-list">
         {items.map((item) => (
           <Link to={`/items/${item.id}`} className="item-card" key={item.id}>
-            <h2>{item.item_name}</h2>
-            <p>{truncate(item.description)}</p>
+            <h2 className="item-title">{item.item_name}</h2>
+            <p className="item-description">{truncate(item.description)}</p>
             <p className="item-meta">
               Qty: {item.quantity} &middot; by {item.username}
             </p>

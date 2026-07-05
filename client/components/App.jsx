@@ -15,7 +15,7 @@ const App = () => {
     <BrowserRouter>
       <AuthProvider>
         <Nav />
-        <main>
+        <main className="main-content">
           <Routes>
             <Route path="/" element={<AllItems />} />
             <Route path="/signup" element={<SignUp />} />

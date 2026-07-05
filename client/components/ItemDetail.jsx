@@ -24,11 +24,11 @@ const ItemDetail = () => {
   }, [id]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className="loading-text">Loading...</p>;
   }
 
   if (!item) {
-    return <p>Item not found.</p>;
+    return <p className="empty-text">Item not found.</p>;
   }
 
   const isOwner = user && user.id === item.user_id;
@@ -73,26 +73,29 @@ const ItemDetail = () => {
     return (
       <div className="form-page">
         {error && <p className="error">{error}</p>}
-        <form onSubmit={handleSave}>
-          <label>
+        <form className="form" onSubmit={handleSave}>
+          <label className="form-label">
             Item Name
             <input
+              className="form-input"
               value={editItemName}
               onChange={(e) => setEditItemName(e.target.value)}
               required
             />
           </label>
-          <label>
+          <label className="form-label">
             Description
             <textarea
+              className="form-textarea"
               value={editDescription}
               onChange={(e) => setEditDescription(e.target.value)}
               rows={4}
             />
           </label>
-          <label>
+          <label className="form-label">
             Quantity
             <input
+              className="form-input"
               type="number"
               min="0"
               value={editQuantity}
@@ -100,8 +103,14 @@ const ItemDetail = () => {
             />
           </label>
           <div className="button-row">
-            <button type="submit">Save</button>
-            <button type="button" onClick={() => setEditing(false)}>
+            <button className="btn btn-primary" type="submit">
+              Save
+            </button>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
               Cancel
             </button>
           </div>
@@ -113,15 +122,19 @@ const ItemDetail = () => {
   return (
     <div className="form-page">
       {error && <p className="error">{error}</p>}
-      <h1>{item.item_name}</h1>
+      <h1 className="page-title">{item.item_name}</h1>
       <p className="item-meta">
         Qty: {item.quantity} &middot; by {item.username}
       </p>
-      <p>{item.description}</p>
+      <p className="item-description">{item.description}</p>
       {isOwner && (
         <div className="button-row">
-          <button onClick={startEditing}>Edit</button>
-          <button onClick={handleDelete}>Delete</button>
+          <button className="btn btn-primary" onClick={startEditing}>
+            Edit
+          </button>
+          <button className="btn btn-danger" onClick={handleDelete}>
+            Delete
+          </button>
         </div>
       )}
     </div>

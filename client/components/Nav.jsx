@@ -19,18 +19,34 @@ const Nav = () => {
         Inventory
       </Link>
       <div className="nav-links">
-        <Link to="/">Browse All Items</Link>
-        {user && <Link to="/inventory">My Inventory</Link>}
-        {user && <Link to="/items/new">Add Item</Link>}
+        <Link to="/" className="nav-link">
+          Browse All Items
+        </Link>
+        {user && (
+          <Link to="/inventory" className="nav-link">
+            My Inventory
+          </Link>
+        )}
+        {user && (
+          <Link to="/items/new" className="nav-link">
+            Add Item
+          </Link>
+        )}
         {user ? (
           <>
             <span className="nav-user">Hi, {user.firstName}</span>
-            <button onClick={handleLogout}>Log Out</button>
+            <button className="btn btn-outline" onClick={handleLogout}>
+              Log Out
+            </button>
           </>
         ) : (
           <>
-            <Link to="/login">Log In</Link>
-            <Link to="/signup">Sign Up</Link>
+            <Link to="/login" className="nav-link">
+              Log In
+            </Link>
+            <Link to="/signup" className="nav-link">
+              Sign Up
+            </Link>
           </>
         )}
       </div>
